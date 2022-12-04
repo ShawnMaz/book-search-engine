@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "watch": "nodemon server.js",
-    "server": "NODE_ENV=development node server.js"
+    "server": "NODE_ENV=\"development\" node server.js"
   },
   "keywords": [],
   "author": "",
