@@ -11,11 +11,8 @@ import { REMOVE_BOOK } from '../utils/mutations';
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
   const {loading, data} = useQuery(GET_ME);
+  const userSavedBooks = data?.savedBooks || []
   const [removeBook, {error}] = useMutation(REMOVE_BOOK);
-
-  if(!loading){
-    setUserData(data);
-  }
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId_google) => {
@@ -53,27 +50,34 @@ const SavedBooks = () => {
       </Jumbotron>
       <Container>
         <h2>
-          {userData.savedBooks.length
-            ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'books'}:`
+          {userSavedBooks.length
+            ? `Viewing ${userSavedBooks.length} saved ${userSavedBooks.length === 1 ? 'book' : 'books'}:`
             : 'You have no saved books!'}
         </h2>
-        <CardColumns>
-          {userData.savedBooks.map((book) => {
-            return (
-              <Card key={book.bookId} border='dark'>
-                {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
-                <Card.Body>
-                  <Card.Title>{book.title}</Card.Title>
-                  <p className='small'>Authors: {book.authors}</p>
-                  <Card.Text>{book.description}</Card.Text>
-                  <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
-                    Delete this Book!
-                  </Button>
-                </Card.Body>
-              </Card>
-            );
-          })}
-        </CardColumns>
+        {
+          userSavedBooks.length && 
+          <CardColumns>
+            {userData.savedBooks.map((book) => {
+              return (
+                <Card key={book.bookId} border='dark'>
+                  {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
+                  <Card.Body>
+                    <Card.Title>{book.title}</Card.Title>
+                    <p className='small'>Authors: {book.authors}</p>
+                    <Card.Text>{book.description}</Card.Text>
+                    <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
+                      Delete this Book!
+                    </Button>
+                    {
+                      error &&
+                      <p className='small text-danger'>Unable to delete book. Something went wrong...</p>
+                    }
+                  </Card.Body>                  
+                </Card>
+              );
+            })}
+          </CardColumns>
+        }
       </Container>
     </>
   );
