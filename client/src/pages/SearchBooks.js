@@ -40,7 +40,6 @@ const SearchBooks = () => {
 
       const { items } = await response.json();
 
-      console.log(items);
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
@@ -57,16 +56,20 @@ const SearchBooks = () => {
     }
   };
 
-  const [saveBook] = useMutation(SAVE_BOOK);
+  const [saveBook, {error}] = useMutation(SAVE_BOOK);
 
   // create function to handle saving a book to our database
   const handleSaveBook = async (book) => {
     try {
       await saveBook(
         {
-          variables:{...book}
-        }
+          variables:{
+            "input":{...book}
+          }
+        }        
       )
+      saveBookIds([...getSavedBookIds(),book.bookId]);
+      setSavedBookIds(getSavedBookIds());
     } catch (err){
       console.error(err);
     }    
@@ -106,7 +109,7 @@ const SearchBooks = () => {
             : 'Search for a book to begin'}
         </h2>
         <CardColumns>
-          {searchedBooks.map((book) => {
+          {searchedBooks.map((book) => { 
             return (
               <Card key={book.bookId} border='dark'>
                 {book.image ? (
