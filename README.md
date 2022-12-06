@@ -24,6 +24,8 @@ This will start the development servers and run the application in development m
 
 ![Application start image](./assets/images/Google%20Book%20Search.png)
 
+The deployed application can be accessed by clicking [here](https://googlebooksearch-shawn.herokuapp.com/).
+
 ## License
 This application is available under the GNU General Public License family license.
 
