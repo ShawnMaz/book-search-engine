@@ -10,6 +10,7 @@ const resolvers = {
                     .select('-__v -password');
                 return userData;
             }
+            throw new AuthenticationError('Please log in to see your saved books');
         }
     },
     Mutation:{
