@@ -1,7 +1,6 @@
-import React, { useState} from 'react';
+import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
 
-import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 import { useMutation, useQuery } from '@apollo/client';
@@ -9,18 +8,12 @@ import {GET_ME} from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
 
 const SavedBooks = () => {
-  const [userData, setUserData] = useState({});
   const {loading, data} = useQuery(GET_ME);
-  const userSavedBooks = data?.savedBooks || []
+  const userSavedBooks = data?.me.savedBooks || [];
   const [removeBook, {error}] = useMutation(REMOVE_BOOK);
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId_google) => {
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-    if (!token) {
-      return false;
-    }
 
     try {
       const {data} = await removeBook(
@@ -28,9 +21,9 @@ const SavedBooks = () => {
           variables:{bookId:bookId_google}
         }
       )
-      setUserData(data);
       // upon success, remove book's id from localStorage
       removeBookId(bookId_google);
+
     } catch (err) {
       console.error(err);
     }
@@ -40,7 +33,7 @@ const SavedBooks = () => {
   if (loading) {
     return <h2>LOADING...</h2>;
   }
-
+  
   return (
     <>
       <Jumbotron fluid className='text-light bg-dark'>
@@ -65,6 +58,7 @@ const SavedBooks = () => {
                     <Card.Title>{book.title}</Card.Title>
                     <p className='small'>Authors: {book.authors}</p>
                     <Card.Text>{book.description}</Card.Text>
+                    <a href={book.link} target='_blank' rel='noopener noreferrer'>Google book link</a>
                     <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
                       Delete this Book!
                     </Button>

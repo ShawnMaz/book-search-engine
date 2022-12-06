@@ -36,9 +36,7 @@ const resolvers = {
             return {token, user};
         },
         saveBook: async(parent, {input}, context) => {
-            console.log(input);
             if(context.user){
-                // const book = await Book.create({...args});
                 const updatedUser = await User.findByIdAndUpdate(
                     {_id:context.user._id},
                     {$push:{savedBooks:{...input}}},
